@@ -17,7 +17,7 @@ void getNMK(std::string line)
     string kValue{};
     for (int i{ 0 }; i <= line.size(); i++)
     {
-        if (!((line[i] == ' ')||(line[i] == '\n')))
+        if (line[i] != ' ')
         {
             switch (currentNMK)
             {
@@ -41,6 +41,23 @@ void getNMK(std::string line)
     m = stoi(mValue);
     k = stoi(kValue);
 }
+
+template<class T>
+int remove_duplicates(T &vals)
+{
+	for (size_t lpo = 0; lpo < vals.size(); lpo++)
+	{
+		for (size_t lp = lpo + 1; lp < vals.size(); lp++)  //  lp needs to stay 1 ahead of lpo.
+		{
+			if (vals[lpo] == vals[lp])
+			{
+				vals.erase(vals.begin() + lp);  //  Also resizes the vector.
+			}
+		}
+	}
+	return vals.size();
+}
+
 int main()
 {
     std::ofstream fout("prize.out");
@@ -57,16 +74,17 @@ int main()
         candyValues.push_back(std::stoi(currentLine));
     }
     std::vector<long> sums;
-    for (int j{ 0 }; j <= (n - m + 1); j++)
+    for (int j{ 0 }; j <= (n - m); j++)
     {
         int currentSum = 0;
-        for (int l{ 0 }; l <= (j + m - 1); l++)
+        for (int l{ j }; l <= (j + m - 1); l++)
         {
-            currentSum += candyValues[j + l];
+            currentSum += candyValues[l];
         }
         sums.push_back(currentSum);
     }
     std::sort(sums.begin(), sums.end(), wayToSort);
-    fout << sums[k-1]<<std::endl;
+	remove_duplicates(sums);
+	fout << sums[k - 1] << std::endl;
     return 0;
 }
