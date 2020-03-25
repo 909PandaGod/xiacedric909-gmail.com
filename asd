@@ -17,7 +17,7 @@ void getNMK(std::string line)
     string kValue{};
     for (int i{ 0 }; i <= line.size(); i++)
     {
-        if (line[i] != ' ')
+        if (!((line[i] == ' ')||(line[i] == '\n')))
         {
             switch (currentNMK)
             {
