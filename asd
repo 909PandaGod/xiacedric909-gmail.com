@@ -42,30 +42,16 @@ void getNMK(std::string line)
     k = stoi(kValue);
 }
 
-template<class T>
-int remove_duplicates(T &vals)
-{
-	for (size_t lpo = 0; lpo < vals.size(); lpo++)
-	{
-		for (size_t lp = lpo + 1; lp < vals.size(); lp++)  //  lp needs to stay 1 ahead of lpo.
-		{
-			if (vals[lpo] == vals[lp])
-			{
-				vals.erase(vals.begin() + lp);  //  Also resizes the vector.
-			}
-		}
-	}
-	return vals.size();
-}
-
 int main()
 {
+    // helped with love by FloweyTheFlower420
+
     std::ofstream fout("prize.out");
     std::ifstream fin("prize.in");
     std::string lineOne;
     getline(fin, lineOne);
     getNMK(lineOne);
-    //std::cout << n << m << k;
+
     std::vector<int> candyValues;
     std::string currentLine;
     for (int i{ 0 }; i <= n-1; i++)
@@ -73,18 +59,41 @@ int main()
         getline(fin, currentLine);
         candyValues.push_back(std::stoi(currentLine));
     }
-    std::vector<long> sums;
-    for (int j{ 0 }; j <= (n - m); j++)
-    {
-        int currentSum = 0;
-        for (int l{ j }; l <= (j + m - 1); l++)
-        {
-            currentSum += candyValues[l];
-        }
-        sums.push_back(currentSum);
+
+    std::vector<long> sums(n + m - 1);
+    int i, j;
+    int sum = 0;
+    for (j = 0; j < m; j++) {
+        sum += candyValues[j];
     }
+    sums[0] = sum;
+
+    for (i = 1; i < candyValues.size() - m + 1; i++) 
+    {
+        sum -= candyValues[i - 1];
+        sum += candyValues[i + m - 1];
+        sums[i] = sum;
+    }
+
     std::sort(sums.begin(), sums.end(), wayToSort);
-	remove_duplicates(sums);
-	fout << sums[k - 1] << std::endl;
+    long prev = sums[0];
+    size_t count = 0;
+    for (auto &i : sums)
+    {
+        if (count == k)
+	{
+	    fout << i << std::endl;
+            exit(0);
+	}
+        if (i != prev)
+        {
+            count++;
+            prev = i;
+        }
+        else
+        {
+	    count++;
+        }
+    }
     return 0;
 }
